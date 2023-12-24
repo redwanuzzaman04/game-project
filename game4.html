@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Infinity Ball Clicker</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #f0f0f0;
+        }
+        #game-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+        }
+        .ball {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background-color: #3498db;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container"></div>
+    <script>
+        const gameContainer = document.getElementById('game-container');
+        let score = 0;
+
+        // Function to create a ball element at a random position
+        function createBall() {
+            const ball = document.createElement('div');
+            ball.classList.add('ball');
+            const xPos = Math.random() * (window.innerWidth - 40);
+            ball.style.left = `${xPos}px`;
+            ball.style.top = '-40px';
+
+            ball.addEventListener('click', () => {
+                gameContainer.removeChild(ball);
+                score++;
+                updateScore();
+            });
+
+            gameContainer.appendChild(ball);
+
+            // Animate the ball falling
+            let intervalId = setInterval(() => {
+                const currentPos = parseInt(ball.style.top);
+                if (currentPos >= window.innerHeight) {
+                    gameContainer.removeChild(ball);
+                    clearInterval(intervalId);
+                } else {
+                    ball.style.top = `${currentPos + 5}px`;
+                }
+            }, 2000);
+        }
+
+        // Function to update the score
+        function updateScore() {
+            document.body.style.cursor = 'pointer';
+            document.body.addEventListener('click', createBall);
+            document.getElementById('score').innerText = `Score: ${score}`;
+        }
+
+        // Initial setup
+        updateScore();
+
+        // Create balls continuously at intervals
+        setInterval(createBall, 100);
+    </script>
+    <div id="score" style="position: fixed; top: 10px; right: 10px; font-size: 20px;"></div>
+</body>
+</html>

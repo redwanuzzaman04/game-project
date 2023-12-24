@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pong Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 50px;
+    }
+
+    canvas {
+      border: 2px solid #333;
+      background-color: #eee;
+      margin: 0 auto;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <h1>Pong Game</h1>
+  <canvas id="gameCanvas" width="800" height="400"></canvas>
+
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const paddleWidth = 10;
+    const paddleHeight = 100;
+    let paddle1Y = canvas.height / 2 - paddleHeight / 2;
+    let paddle2Y = canvas.height / 2 - paddleHeight / 2;
+    const ballSize = 10;
+    let ballX = canvas.width / 2;
+    let ballY = canvas.height / 2;
+    let ballSpeedX = 5;
+    let ballSpeedY = 5;
+    let player1Score = 0;
+    let player2Score = 0;
+    const winningScore = 3;
+    let showingWinScreen = false;
+
+    function drawNet() {
+      for (let i = 0; i < canvas.height; i += 40) {
+        ctx.fillStyle = '#333';
+        ctx.fillRect(canvas.width / 2 - 1, i, 2, 20);
+      }
+    }
+
+    function drawRect(x, y, width, height, color) {
+      ctx.fillStyle = color;
+      ctx.fillRect(x, y, width, height);
+    }
+
+    function drawCircle(x, y, radius, color) {
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, Math.PI * 2, true);
+      ctx.fill();
+    }
+
+    function drawScores() {
+      ctx.fillText('Player 1: ' + player1Score, 100, 100);
+      ctx.fillText('Player 2: ' + player2Score, canvas.width - 160, 100);
+    }
+
+    function draw() {
+      drawRect(0, 0, canvas.width, canvas.height, '#eee');
+      if (showingWinScreen) {
+        ctx.fillStyle = '#333';
+        ctx.fillText('Click to continue', canvas.width / 2 - 50, canvas.height / 2);
+        return;
+      }
+      drawNet();
+      drawScores();
+      drawRect(5, paddle1Y, paddleWidth, paddleHeight, '#333');
+      drawRect(canvas.width - paddleWidth - 5, paddle2Y, paddleWidth, paddleHeight, '#333');
+      drawCircle(ballX, ballY, ballSize, '#333');
+    }
+
+    function move() {
+      if (showingWinScreen) return;
+
+      ballX += ballSpeedX;
+      ballY += ballSpeedY;
+
+      // Ball collision with paddles
+      if (ballX <= paddleWidth + ballSize && ballY >= paddle1Y && ballY <= paddle1Y + paddleHeight) {
+        ballSpeedX = -ballSpeedX;
+      } else if (ballX >= canvas.width - paddleWidth - ballSize && ballY >= paddle2Y && ballY <= paddle2Y + paddleHeight) {
+        ballSpeedX = -ballSpeedX;
+      }
+
+      // Ball collision with top and bottom walls
+      if (ballY <= 0 || ballY >= canvas.height) {
+        ballSpeedY = -ballSpeedY;
+      }
+
+      // Scoring
+      if (ballX < 0) {
+        player2Score++;
+        resetBall();
+      } else if (ballX > canvas.width) {
+        player1Score++;
+        resetBall();
+      }
+    }
+
+    function resetBall() {
+      if (player1Score >= winningScore || player2Score >= winningScore) {
+        showingWinScreen = true;
+        return;
+      }
+      ballX = canvas.width / 2;
+      ballY = canvas.height / 2;
+      ballSpeedX = -ballSpeedX;
+    }
+
+    function calculateMousePos(event) {
+      const rect = canvas.getBoundingClientRect();
+      const root = document.documentElement;
+      const mouseX = event.clientX - rect.left - root.scrollLeft;
+      const mouseY = event.clientY - rect.top - root.scrollTop;
+      return {
+        x: mouseX,
+        y: mouseY
+      };
+    }
+
+    function handleMouse(event) {
+      if (showingWinScreen) {
+        player1Score = 0;
+        player2Score = 0;
+        showingWinScreen = false;
+        return;
+      }
+      const mousePos = calculateMousePos(event);
+      paddle1Y = mousePos.y - paddleHeight / 2;
+    }
+
+    canvas.addEventListener('mousedown', handleMouse);
+
+    function update() {
+      move();
+      draw();
+    }
+
+    setInterval(update, 1000 / 60);
+  </script>
+</body>
+</html>
