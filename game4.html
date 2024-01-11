@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Infinity Ball Clicker</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #2c3e50;
+        }
+        #game-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            background-color: #34495e;
+        }
+        .ball {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background-color: #e74c3c;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        #score {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+            color: #ecf0f1;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container"></div>
+    <div id="score">Score: 0</div>
+    <script>
+        const gameContainer = document.getElementById('game-container');
+        let score = 0;
+
+        function createBall() {
+            const ball = document.createElement('div');
+            ball.classList.add('ball');
+            const xPos = Math.random() * (window.innerWidth - 60);
+            ball.style.left = `${xPos}px`;
+            ball.style.top = '-60px';
+
+            ball.addEventListener('click', () => {
+                gameContainer.removeChild(ball);
+                score++;
+                updateScore();
+            });
+
+            gameContainer.appendChild(ball);
+
+            let intervalId = setInterval(() => {
+                const currentPos = parseInt(ball.style.top);
+                if (currentPos >= window.innerHeight) {
+                    gameContainer.removeChild(ball);
+                    clearInterval(intervalId);
+                } else {
+                    ball.style.top = `${currentPos + 8}px`;
+                }
+            }, 30);
+        }
+
+        function updateScore() {
+            document.getElementById('score').innerText = `Score: ${score}`;
+        }
+
+        setInterval(createBall, 3000);
+    </script>
+</body>
+</html>

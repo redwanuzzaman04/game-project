@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Rock Paper Scissors</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+    }
+    .game {
+      text-align: center;
+    }
+    .choices {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .choice-btn {
+      padding: 10px 20px;
+      font-size: 18px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="game">
+    <h1>Rock Paper Scissors Lizard Spock</h1>
+    <div class="choices">
+      <button class="choice-btn" onclick="playGame('rock')">Rock</button>
+      <button class="choice-btn" onclick="playGame('paper')">Paper</button>
+      <button class="choice-btn" onclick="playGame('scissors')">Scissors</button>
+      <button class="choice-btn" onclick="playGame('lizard')">Lizard</button>
+      <button class="choice-btn" onclick="playGame('spock')">Spock</button>
+    </div>
+    <p id="result"></p>
+  </div>
+
+  <script>
+    function playGame(playerChoice) {
+      const choices = ['rock', 'paper', 'scissors'];
+      const computerChoice = choices[Math.floor(Math.random() * 3)];
+
+      const result = compareChoices(playerChoice, computerChoice);
+      document.getElementById('result').innerText = result;
+    }
+
+    function compareChoices(player, computer) {
+      if (player === computer) {
+        return "It's a tie!";
+      } else if (
+        (player === 'rock' && computer === 'scissors') ||
+        (player === 'paper' && computer === 'rock') ||
+        (player === 'scissors' && computer === 'paper')
+      ) {
+        return 'You win!';
+      } else {
+        return 'You lose!';
+      }
+    }
+  </script>
+</body>
+</html>
